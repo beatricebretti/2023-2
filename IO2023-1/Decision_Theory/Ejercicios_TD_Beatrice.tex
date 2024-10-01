@@ -1,0 +1,428 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[spanish, es-noshorthands]{babel}
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage[colorlinks, urlcolor=blue]{hyperref}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{arydshln}
+\usepackage{adjustbox}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{kvmap}
+\usepackage{minted}
+\usepackage{tikz}
+\usepackage{forest}
+\usepackage{mathtools}
+\tikzstyle{decision} = [rectangle, minimum height=18pt, minimum width=18pt, draw=black, fill=none, thick, inner sep=0pt]
+\tikzstyle{chance} = [circle, minimum width=18pt, draw=black, fill=none, thick, inner sep=0pt]
+\tikzstyle{line} = [draw=none]
+
+\tikzset{
+grow=right,
+sloped,
+join=miter,
+level 1/.style={sibling distance=5cm,level distance=3cm},
+level 2/.style={sibling distance=4cm, level distance=3cm},
+level 3/.style={sibling distance=2.5cm, level distance=3cm},
+level 4/.style={sibling distance=1cm, level distance=3cm},
+edge from parent/.style={thick, draw=black},
+edge from parent path={(\tikzparentnode.east) -- (\tikzchildnode.west)},
+every node/.style={text ragged, inner sep=1mm}
+}
+\begin{document}
+
+\renewcommand{\listtablename}{Índice de tablas} 
+\renewcommand{\tablename}{Tabla} 
+
+\begin{titlepage}
+   \begin{center}
+       \includegraphics[width=400pt]{Departamento-de-Informtica_HORIZONTAL.png}
+       \vspace*{3cm}
+        
+       \textbf{\LARGE Resolución guía ejercicios:}
+
+       \vspace{0.5cm}
+        \Large \textbf{``Teoría de Decisión"}
+            
+       \vspace{2.5cm}
+
+       \large Beatrice Valdés, 201941556-5
+
+       \vfill
+            
+       \vspace{0.8cm}
+     
+       Departamento de Ingeniería Civil Informática\\
+       Universidad Técnica Federico Santa María\\
+       Investigación de Operaciones INF292\\
+       Agosto de 2023
+            
+   \end{center}
+\end{titlepage}
+
+
+\section{Caso 1}
+\begin{itemize}
+    \item Objetivo: Maximizar la felicidad del marido
+    \item Cursos de acción: $A=\{a_E, a_B, a_H, L, \neg L\}$
+        \begin{itemize}
+            \item $a_E$ : Cocinar exquisitez
+            \item $a_B$ : Cocinar bistec
+            \item $a_H$ : Cocinar hamburguesa
+            \item $L$ : Llamar al marido
+            \item $\neg L$ : No llamar al marido
+        \end{itemize}
+    \item Estados de la naturaleza: $S=\{s_A, s_F, s_g, r_1, r_2, r_3\}$
+        \begin{itemize}
+            \item $s_A$ : El marido está alegre
+            \item $s_F$ : El marido está fácil de tratar
+            \item $s_G$ : El marido está gruñón
+            \item $r_1$ : El marido responde 1
+            \item $r_2$ : El marido responde 2
+            \item $r_3$ : El marido responde 3
+        \end{itemize}
+    \item Matriz de utilidad: (enunciado)
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|c|c|c}
+                            & Exquisitez & Bistec & Hamburguesa \\\hline
+            Alegre          & 30         & 80     & 60\\ \hline
+            Fácil de tratar & 65         & 50     & 90\\ \hline
+            Gruñón          & 100        & 70     & 00\\ \hline
+        \end{tabular}
+    \end{table}
+\end{itemize}
+Además de todo esto desde el enunciado tenemos las siguientes probabilidades:
+\begin{itemize}
+    \item $P(s_F): 0.6$
+    \item $P(s_G): 0.15$
+    \item $P(s_A): 1 - (P(s_F) + P(s_G)) = 0.25$
+    \item $P(r_1|s_G) = 0.3$
+    \item $P(r_1|s_F) = 0.5$
+    \item $P(r_1|s_A) = 0.3$
+    \item $P(r_2|s_G) = 0.6$
+    \item $P(r_2|s_F) = 0.2$
+    \item $P(r_2|s_A) = 0.2$
+\end{itemize}
+Vamos a calcular lo siguiente utilizando la probabilidad total, ya que sabemos que el marido respondió 2:
+\begin{equation*}
+    P(r_2) = P(r_2|s_A)\times P(s_A) + P(r_2|s_F)\times P(s_F) + P(r_2|s_G)\times P(s_G)
+\end{equation*}
+\begin{equation*}
+    P(r_2) = 0,2\times 0,25 + 0,2\times 0,6 + 0,6\times 0,15 = 0,26
+\end{equation*}
+Con este resultado y utilizando Bayes podemos obtener las probabilidades de que esté de algún estado de animo dado que respondió 2:
+\begin{equation*}
+        P(s_A|r_2) = \frac{P(r_2|s_A)\times P(s_A)}{P(r_2)} = \frac{0,2\times 0,25}{0,26} = 0,19
+\end{equation*}
+\begin{equation*}
+        P(s_F|r_2) = \frac{P(r_2|s_F)\times P(s_F)}{P(r_2)} = \frac{0,2\times 0,6}{0,26} = 0,46
+\end{equation*}
+\begin{equation*}
+        P(s_G|r_2) = \frac{P(r_2|s_G)\times P(s_G)}{P(r_2)} = \frac{0,6\times 0,15}{0,26} = 0,35
+\end{equation*}
+Luego, 
+\begin{equation*}
+    E(a_E) = P(s_A|r_2) \times 30 + P(s_F|r_2) \times 65 + P(s_G|r_2) \times 100 = 70,6
+\end{equation*}
+\begin{equation*}
+    E(a_E) = P(s_A|r_2) \times 80 + P(s_F|r_2) \times 50 + P(s_G|r_2) \times 70 = 62,7
+\end{equation*}
+\begin{equation*}
+    E(a_E) = P(s_A|r_2) \times 60 + P(s_F|r_2) \times 90 + P(s_G|r_2) \times 0 = 52,8
+\end{equation*}
+Con ello tendríamos este árbol de decisión (se realizó solo rama de interés):
+\begin{center}
+\begin{tikzpicture}[H]
+\small
+\node[decision]{}
+    child{node[line]{}
+      edge from parent
+        node[above]{$\neg L$}
+    }
+    child{node[chance]{}
+      child{node[decision]{...}
+        edge from parent
+            node[above]{$r_3$}
+      }
+      child{node[decision]{$70,6$}
+        child{node[chance]{$52,8$}
+            child{node[line]{0}
+                edge from parent
+                    node[above]{$s_G$}
+            }
+            child{node[line]{90}
+                edge from parent
+                    node[above]{$s_F$}
+            }
+            child{node[line]{60}
+                edge from parent
+                    node[above]{$s_A$}
+            }
+            edge from parent
+            node[above]{$a_H$}
+        }
+        child{node[chance]{$62,7$}
+            child{node[line]{70}
+                edge from parent
+                    node[above]{$s_G$}
+            }
+            child{node[line]{50}
+                edge from parent
+                    node[above]{$s_F$}
+            }
+            child{node[line]{80}
+                edge from parent
+                    node[above]{$s_A$}
+            }
+            edge from parent
+            node[above]{$a_B$}
+        }
+        child{node[chance]{$70,6$}
+            child{node[line]{100}
+                edge from parent
+                    node[above]{$s_G$}
+            }
+            child{node[line]{65}
+                edge from parent
+                    node[above]{$s_F$}
+            }
+            child{node[line]{30}
+                edge from parent
+                    node[above]{$s_A$}
+            }
+            edge from parent
+            node[above]{$a_E$}
+        }
+        edge from parent
+            node[above]{$r_2$}
+      }
+      child{node[decision]{...}
+        edge from parent
+            node[above]{$r_1$}
+      }
+      edge from parent
+            node[below]{$L$}
+        };
+\end{tikzpicture}
+\end{center}
+\textbf{Por lo tanto Ana María debe cocinar el menú exquisitez y así obtendrá la máxima utilidad o felicidad con un valor de $70,6$.}\\\\
+Para saber en cuanto aumento la utilidad gracias al llamado telefónico debemos resolver la rama en la que no se realizó el llamado, es decir:
+
+\tikzset{
+grow=right,
+sloped,
+join=miter,
+level 1/.style={sibling distance=5cm,level distance=3cm},
+level 2/.style={sibling distance=3cm, level distance=3cm},
+level 3/.style={sibling distance=1cm, level distance=3cm},
+level 4/.style={sibling distance=1cm, level distance=3cm},
+edge from parent/.style={thick, draw=black},
+edge from parent path={(\tikzparentnode.east) -- (\tikzchildnode.west)},
+every node/.style={text ragged, inner sep=1mm}
+}
+
+\begin{center}
+\begin{tikzpicture}[H]
+\small
+\node[decision]{}
+    child{node[line]{}
+      edge from parent
+        node[above]{$L$}
+    }
+    child{node[decision]{$69$}
+      child{node[chance]{$69,0$}
+        child{node[line]{0}
+            edge from parent
+                    node[above]{$s_G$}
+        }
+        child{node[line]{90}
+            edge from parent
+                    node[above]{$s_F$}
+        }
+        child{node[line]{60}
+            edge from parent
+                    node[above]{$s_A$}
+        }
+        edge from parent
+            node[above]{$a_H$}
+      }
+      child{node[chance]{$60,5$}
+        child{node[line]{70}
+            edge from parent
+                    node[above]{$s_G$}
+        }
+        child{node[line]{50}
+            edge from parent
+                    node[above]{$s_F$}
+        }
+        child{node[line]{80}
+            edge from parent
+                    node[above]{$s_A$}
+        }
+        edge from parent
+            node[above]{$a_B$}
+      }
+      child{node[chance]{$61,5$}
+        child{node[line]{100}
+            edge from parent
+                    node[above]{$s_G$}
+        }
+        child{node[line]{65}
+            edge from parent
+                    node[above]{$s_F$}
+        }
+        child{node[line]{30}
+            edge from parent
+                    node[above]{$s_A$}
+        }
+        edge from parent
+            node[above]{$a_E$}
+      }
+      edge from parent
+            node[below]{$\neg L$}
+        };
+\end{tikzpicture}
+\end{center}
+Por lo tanto si no llama a su marido, la felicidad tiene un valor de $69$. \textbf{Para calcular el aumento simplemente obtenemos que es $70,6 - 69 = 1,6$}\\\\
+Utilizando el criterio Maximin o pesimista tendremos:
+\begin{table}[H]
+        \centering
+        \begin{tabular}{c|c|c|c}
+                            & Exquisitez & Bistec & Hamburguesa \\\hline
+            Alegre          & 30         & 80     & 60\\ \hline
+            Fácil de tratar & 65         & 50     & 90\\ \hline
+            Gruñón          & 100        & 70     & 00\\ \hline
+            Mínimo          & 30         & 50     & 00\\ 
+        \end{tabular}
+\end{table}
+Luego de encontrar los mínimos debemos seleccionar la mejor opción dentro de ellas. \textbf{Como nuestro objetivo es maximizar la utilidad seleccionamos la con valor $50$, eso es que Ana María debe cocinar bistec según este criterio.}
+
+\section{Caso 2}
+\begin{itemize}
+    \item Objetivo: Maximizar ganancias
+    \item Cursos de acción: $A=\{a_E, \neg a_E, a_I, \neg a_I\}$
+        \begin{itemize}
+            \item $a_E$ : Realizar el estudio de mercado
+            \item $\neg a_E$ : No realizar el estudio de mercado
+            \item $a_I$ : Introducir la CocaCola Limón
+            \item $\neg a_I$ : No introducir la CocaCola Limón
+        \end{itemize}
+    \item Estados de la naturaleza: $S=\{s_{EN}, s_{EL}, s_{FN}, s_{FL}\}$
+        \begin{itemize}
+            \item $s_{EN}$ : La CocaCola Limón es un éxito nacional
+            \item $s_{EL}$ : La CocaCola Limón es un éxito local
+            \item $s_{FN}$ : La CocaCola Limón es un fracaso nacional
+            \item $s_{FL}$ : La CocaCola Limón es un fracaso local
+        \end{itemize}
+\end{itemize}
+
+El enunciado nos entrega:
+\begin{itemize}
+    \item $P(s_{EN}): 0.55$
+    \item $P(s_{FN}): 0.45$
+    \item $P(s_{EL}): 0.6$
+    \item $P(s_{FL}): 0.4$
+    \item $P(s_{EN}|s_{EL}) = 0.85$
+    \item $P(s_{EN}|s_{FL}) = 0.1$
+    \item $P(s_{FN}|s_{EL}) = 1 - P(s_{EN}|s_{EL}) = 0.15$
+    \item $P(s_{FN}|s_{FL}) = 1 - P(s_{EN}|s_{EL}) = 0.9$
+\end{itemize}
+
+Con ello, el árbol de decisión nos queda como:
+
+\tikzset{
+grow=right,
+sloped,
+join=miter,
+level 1/.style={sibling distance=5cm,level distance=3cm},
+level 2/.style={sibling distance=2cm, level distance=3cm},
+level 3/.style={sibling distance=1cm, level distance=3cm},
+level 4/.style={sibling distance=1cm, level distance=3cm},
+edge from parent/.style={thick, draw=black},
+edge from parent path={(\tikzparentnode.east) -- (\tikzchildnode.west)},
+every node/.style={text ragged, inner sep=1mm}
+}
+
+\begin{center}
+\begin{tikzpicture}[H]
+\small
+\node[decision]{(4)}
+    child{node[decision]{(4)}
+        child{node[chance]{(4)}
+            child{node[line]{B + 300000}
+                edge from parent
+                    node[below]{$s_{EN}$}
+            }
+            child{node[line]{B - 100000}
+                edge from parent
+                    node[above]{$s_{FN}$}
+            }
+            edge from parent
+                node[above]{$a_I$}
+        }
+        child{node[line]{B}
+            edge from parent
+                node[above]{$\neg a_I$}
+        }
+        edge from parent
+            node[above]{$\neg a_E$}
+    }
+    child{node[chance]{(5)}
+      child{node[decision]{(3)}
+        child{node[line]{$B - 30000 (3)$}
+            edge from parent
+                    node[below]{$\neg a_I$}
+        }
+        child{node[chance]{(2)}
+            child{node[line]{$B + 300000 - 30000$}
+                edge from parent
+                    node[below]{$s_{EN}$}
+            }
+            child{node[line]{$B - 100000 - 30000$}
+                edge from parent
+                    node[above]{$s_{FN}$}
+            }
+            edge from parent
+                    node[above]{$a_I$}
+        }
+        edge from parent
+            node[above]{$s_{FL}$}
+      }
+      child{node[decision]{(1)}
+        child{node[line]{$B - 30000$}
+            edge from parent
+                node[below]{$\neg a_I$}
+        }
+        child{node[chance]{(1)}
+            child{node[line]{$B + 300000 - 30000$}
+                edge from parent
+                    node[below]{$s_{EN}$}
+            }
+            child{node[line]{$B - 100000 - 30000$}
+                edge from parent
+                    node[above]{$s_{FN}$}
+            }
+            edge from parent
+                node[above]{$a_I$}
+        }
+        edge from parent
+            node[above]{$s_{EL}$}
+      }
+      edge from parent
+            node[below]{$a_E$}
+    };
+\end{tikzpicture}
+\end{center}
+Donde:
+\begin{itemize}
+    \item $B = 150000000$ (Saldo inicial)
+    \item $(1) = P(s_{EN}|s_{EL})\times (B + 300000 - 30000) + P(s_{FN}|s_{EL})\times (B - 100000 - 30000)$\\ $(1) = 150210000$
+    \item $(2) = P(s_{EN}|s_{FL})\times (B + 300000 - 30000) + P(s_{FN}|s_{FL})\times (B - 100000 - 30000)$\\ $(2) = 149910000$
+    \item $(3) = 149970000$
+    \item $(4) = P(s_{EN})\times (B + 300000) + P(s_{FN})\times (B - 100000)$\\ $(4) = 150120000$
+    \item $(5) = P(s_{EL})\times (1) + P(s_{FL})\times (3) = 150090000$
+\end{itemize}
+Luego, como $(4) > (5)$, nos quedamos con la opción número 2 (no hacer el estudio e introducir la CocaCola Limón en el mercado).
+\end{document}
